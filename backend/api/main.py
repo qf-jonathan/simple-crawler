@@ -9,8 +9,8 @@ crawled_url_repository = CrawledUrlRepository(get_engine())
 
 
 @app.get("/tasks")
-async def tasks() -> list[Task]:
-    return await task_repository.get_list()
+async def tasks(offset: int = 0, limit: int = 100) -> list[Task]:
+    return await task_repository.get_list(offset, limit)
 
 
 @app.post("/tasks")
@@ -27,8 +27,8 @@ async def get_task(id: int) -> Task:
 
 
 @app.get("/crawled-urls")
-async def crawler_urls() -> list[CrawletUrl]:
-    return await crawled_url_repository.get_list()
+async def crawler_urls(offset: int = 0, limit: int = 100) -> list[CrawletUrl]:
+    return await crawled_url_repository.get_list(offset, limit)
 
 
 @app.get("/stats")
