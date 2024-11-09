@@ -15,7 +15,9 @@ crawled_url_repository = CrawledUrlRepository(get_engine())
 async def execute_task(task: Task):
     logger.info(f"Executing task {task.id} [{task.url}]")
 
-    crawlet_urls = await crawl_url(task.url, task.max_depth)
+    crawlet_urls = await crawl_url(
+        task.url, task.max_depth, set(task.domains), set(task.blacklist)
+    )
 
     for crawled_url in crawlet_urls:
         crawled_url.task_id = task.id
