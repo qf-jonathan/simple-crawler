@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, Column, JSON
 from enum import Enum
 from datetime import datetime
+from pydantic import BaseModel
 
 
 class TaskState(str, Enum):
@@ -28,3 +29,15 @@ class CrawletUrl(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     task_id: int | None = Field(default=None, foreign_key="task.id")
     links: list[str] = Field(sa_column=Column(JSON), default_factory=list)
+
+
+class DomainStats(BaseModel):
+    domain: str
+    total_crawled_urls: int
+
+
+class Stats(BaseModel):
+    total_crawled_urls: int
+    total_errors_during_crawling: int
+    status_code_stats: dict[int, int]
+    domain_stats: list[DomainStats]

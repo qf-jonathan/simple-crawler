@@ -1,11 +1,13 @@
 import asyncio
 from random import random
 from functools import lru_cache
-from .models import SQLModel, Task, CrawletUrl, TaskState
+from storage.models import SQLModel, Task, CrawletUrl, TaskState, Stats, DomainStats
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from typing import TypeVar, Generic
+from collections import Counter
+from urllib.parse import urlparse
 
 T = TypeVar("T", bound=SQLModel)
 
@@ -92,3 +94,25 @@ class TaskRepository(BaseRepository[Task]):
 class CrawledUrlRepository(BaseRepository[CrawletUrl]):
     def __init__(self, engine: AsyncEngine):
         super().__init__(CrawletUrl, engine)
+
+    async def get_stats(self) -> Stats:
+        async with AsyncSession(self.engine) as session:
+            result = await session.exec(select(CrawletUrl))
+            crawled_urls = result.all()
+
+        total_crawled_urls = len(crawled_urls)
+        total_errors_during_crawling = sum(
+            1 for url in crawled_urls if url.status_code >= 400
+        )
+        status_code_stats = Counter([url.status_code for url in crawled_urls])
+        domain_stats = Counter([urlparse(url.url).netloc for url in crawled_urls])
+
+        return Stats(
+            total_crawled_urls=total_crawled_urls,
+            total_errors_during_crawling=total_errors_during_crawling,
+            status_code_stats=status_code_stats,
+            domain_stats=[
+                DomainStats(domain=domain, total_crawled_urls=count)
+                for domain, count in domain_stats.items()
+            ],
+        )
