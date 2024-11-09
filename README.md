@@ -11,7 +11,7 @@ This repository contains a simple crawler project that uses FastAPI and asyncio.
 ## Requirements
 
 - Python 3.8+
-- uv (Python package manager)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python package manager)
 
 ## Installation
 
