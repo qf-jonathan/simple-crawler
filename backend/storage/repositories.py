@@ -1,5 +1,3 @@
-import asyncio
-from random import random
 from functools import lru_cache
 from storage.models import SQLModel, Task, CrawletUrl, TaskState, Stats, DomainStats
 from sqlmodel import select
@@ -77,7 +75,6 @@ class TaskRepository(BaseRepository[Task]):
             return result.all()
 
     async def get_to_run(self) -> int | None:
-        await asyncio.sleep(random())
         async with AsyncSession(self.engine) as session:
             result = await session.exec(
                 select(Task).where(Task.state == TaskState.PENDING).limit(1)
