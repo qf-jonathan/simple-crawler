@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from storage.models import Task, CrawletUrl, Stats, DomainStats
+from storage.models import Task, CrawletUrl, Stats
 from storage.repositories import TaskRepository, CrawledUrlRepository, get_engine
 
 app = FastAPI()

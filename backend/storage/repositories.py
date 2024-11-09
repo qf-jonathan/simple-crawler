@@ -8,13 +8,14 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from typing import TypeVar, Generic
 from collections import Counter
 from urllib.parse import urlparse
+from settings import SQLALCHEMY_DATABASE_URL
 
 T = TypeVar("T", bound=SQLModel)
 
 
 @lru_cache(maxsize=1)
 def get_engine():
-    return create_async_engine("sqlite+aiosqlite:///storage.db")
+    return create_async_engine(SQLALCHEMY_DATABASE_URL)
 
 
 async def init_db(engine: AsyncEngine):

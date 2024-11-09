@@ -3,6 +3,7 @@ import logging
 
 from crawler.worker import worker
 from storage.repositories import init_db, get_engine
+from settings import CRAWLER_WORKERS_COUNT
 
 logging.basicConfig(
     level=logging.INFO,
@@ -11,13 +12,10 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-WORKER_COUNT = 3
-
 
 async def main():
     await init_db(get_engine())
-    semaphore = asyncio.Semaphore(WORKER_COUNT)
-    workers = [worker(semaphore) for _ in range(WORKER_COUNT)]
+    workers = [worker() for _ in range(CRAWLER_WORKERS_COUNT)]
     logger.info("Service workers started")
     await asyncio.gather(*workers)
 

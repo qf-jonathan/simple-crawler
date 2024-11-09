@@ -24,10 +24,9 @@ async def execute_task(task: Task):
     logger.info(f"Finished task {task.id} [{task.url}]")
 
 
-async def worker(semaphore: asyncio.Semaphore):
+async def worker():
     while True:
-        async with semaphore:
-            task = await task_repository.get_to_run()
-            if task is not None:
-                await execute_task(task)
+        task = await task_repository.get_to_run()
+        if task is not None:
+            await execute_task(task)
         await asyncio.sleep(1)
